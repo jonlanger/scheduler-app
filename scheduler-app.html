@@ -151,25 +151,4 @@
                     <p><strong>Address:</strong> ${document.getElementById('address').value}</p>
                     <p><strong>Name:</strong> ${document.getElementById('name').value}</p>
                     <p><strong>Type of Trash:</strong> ${document.getElementById('trashType').value}</p>
-                    <p><strong>Pickup Frequency:</strong> ${document.getElementById('frequency').value}</p>
-                    <p><strong>Weight:</strong> ${document.getElementById('weight').value}</p>
-                    <p><strong>Bin Type:</strong> ${document.getElementById('binType').value}</p>
-                    <p><strong>Comments:</strong> ${document.getElementById('comments').value}</p>
-                    <button class="button is-danger is-small" onclick="cancelPickup(this)">Cancel</button>
-                </div>
-            `;
-
-            card.innerHTML = cardContent;
-            cardContainer.appendChild(card);
-        }
-
-        function cancelPickup(button) {
-            if (confirm("Are you sure you want to cancel the Scheduled Pick Up?")) {
-                var card = button.parentElement.parentElement;
-                card.remove();
-            }
-        }
-    </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
-</body>
-</html>
+                    <p><strong>Pickup Frequency:</strong> ${document.get
