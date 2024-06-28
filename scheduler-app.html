@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trash and Recycling Pickup Scheduler</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css" rel="stylesheet">
+    <style>
+        .scheduler-app {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .scheduler-map {
+            height: 500px;
+            width: 100%;
+        }
+
+        .scheduler-card-container {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .scheduler-card {
+            margin: 16px;
+            width: 300px;
+        }
+
+        .scheduler-form {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <section class="section scheduler-app">
+        <div class="container">
+            <h1 class="title">Trash and Recycling Pickup Scheduler</h1>
+            <div class="columns">
+                <div class="column is-two-thirds">
+                    <div id="map" class="scheduler-map"></div>
+                </div>
+                <div class="column is-one-third">
+                    <div class="scheduler-form">
+                        <div class="field">
+                            <label class="label">Address</label>
+                            <div class="control">
+                                <input class="input" type="text" id="address" placeholder="Enter address">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Name</label>
+                            <div class="control">
+                                <input class="input" type="text" id="name" placeholder="Enter your name">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Type of Trash</label>
+                            <div class="control">
+                                <div class="select">
+                                    <select id="trashType">
+                                        <option>General Waste</option>
+                                        <option>Recycling</option>
+                                        <option>Organic</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Pickup Frequency</label>
+                            <div class="control">
+                                <div class="select">
+                                    <select id="frequency">
+                                        <option>One Time</option>
+                                        <option>Recurring</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Weight (Optional)</label>
+                            <div class="control">
+                                <input class="input" type="number" id="weight" placeholder="Enter weight">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Bin Type (Optional)</label>
+                            <div class="control">
+                                <input class="input" type="text" id="binType" placeholder="Enter bin type">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Comments (Optional)</label>
+                            <div class="control">
+                                <textarea class="textarea" id="comments" placeholder="Enter any comments"></textarea>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="control">
+                                <button class="button is-primary" id="scheduleButton">Schedule Pickup</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="scheduler-card-container" id="cardContainer"></div>
+        </div>
+    </section>
+
+    <script>
+        // Initialize the map
+        function initMap() {
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 10,
+                center: {lat: -34.397, lng: 150.644}
+            });
+            var geocoder = new google.maps.Geocoder();
+
+            document.getElementById('scheduleButton').addEventListener('click', function() {
+                geocodeAddress(geocoder, map);
+            });
+        }
+
+        function geocodeAddress(geocoder, resultsMap) {
+            var address = document.getElementById('address').value;
+            geocoder.geocode({'address': address}, function(results, status) {
+                if (status === 'OK') {
+                    resultsMap.setCenter(results[0].geometry.location);
+                    var marker = new google.maps.Marker({
+                        map: resultsMap,
+                        position: results[0].geometry.location
+                    });
+                    addCard(results[0].geometry.location);
+                } else {
+                    alert('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+        }
+
+        function addCard(location) {
+            var cardContainer = document.getElementById('cardContainer');
+            var card = document.createElement('div');
+            card.className = 'card scheduler-card';
+
+            var cardContent = `
+                <div class="card-content">
+                    <p><strong>Address:</strong> ${document.getElementById('address').value}</p>
+                    <p><strong>Name:</strong> ${document.getElementById('name').value}</p>
+                    <p><strong>Type of Trash:</strong> ${document.getElementById('trashType').value}</p>
+                    <p><strong>Pickup Frequency:</strong> ${document.getElementById('frequency').value}</p>
+                    <p><strong>Weight:</strong> ${document.getElementById('weight').value}</p>
+                    <p><strong>Bin Type:</strong> ${document.getElementById('binType').value}</p>
+                    <p><strong>Comments:</strong> ${document.getElementById('comments').value}</p>
+                    <button class="button is-danger is-small" onclick="cancelPickup(this)">Cancel</button>
+                </div>
+            `;
+
+            card.innerHTML = cardContent;
+            cardContainer.appendChild(card);
+        }
+
+        function cancelPickup(button) {
+            if (confirm("Are you sure you want to cancel the Scheduled Pick Up?")) {
+                var card = button.parentElement.parentElement;
+                card.remove();
+            }
+        }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+</body>
+</html>
