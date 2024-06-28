@@ -29,14 +29,29 @@
         .scheduler-card {
             margin: 16px;
             width: 300px;
+            height: 50vh;
+            overflow-y: auto;
         }
 
         .scheduler-form {
             margin-bottom: 20px;
         }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #48c774;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
+    <div id="toast" class="toast">Scheduled Pickup Successfully!</div>
     <section class="section scheduler-app">
         <div class="container">
             <h1 class="title">Trash and Recycling Pickup Scheduler</h1>
@@ -56,6 +71,12 @@
                             <label class="label">Name</label>
                             <div class="control">
                                 <input class="input" type="text" id="name" placeholder="Enter your name">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Date</label>
+                            <div class="control">
+                                <input class="input" type="date" id="date">
                             </div>
                         </div>
                         <div class="field">
@@ -88,9 +109,55 @@
                             </div>
                         </div>
                         <div class="field">
-                            <label class="label">Bin Type (Optional)</label>
+                            <label class="label">Bin Type</label>
                             <div class="control">
-                                <input class="input" type="text" id="binType" placeholder="Enter bin type">
+                                <div class="select">
+                                    <select id="binType">
+                                        <option>Residential Containers</option>
+                                        <option>Curbside Bins/Wheeled Carts</option>
+                                        <option>Standard Trash Carts: Typically 30, 60, or 90 gallons.</option>
+                                        <option>Recycling Carts: Usually color-coded, same sizes as trash carts.</option>
+                                        <option>Green Waste Carts: For yard waste, similar sizes to trash and recycling carts.</option>
+                                        <option>Commercial Containers</option>
+                                        <option>Front-Load Dumpsters</option>
+                                        <option>Small Dumpsters: 2-yard and 4-yard dumpsters.</option>
+                                        <option>Medium Dumpsters: 6-yard dumpsters.</option>
+                                        <option>Large Dumpsters: 8-yard dumpsters.</option>
+                                        <option>Rear-Load Dumpsters</option>
+                                        <option>Similar sizes to front-load but designed for rear-loading garbage trucks.</option>
+                                        <option>Roll-Off Containers</option>
+                                        <option>Small Roll-Offs: 10-yard containers.</option>
+                                        <option>Medium Roll-Offs: 20-yard containers.</option>
+                                        <option>Large Roll-Offs: 30-yard and 40-yard containers.</option>
+                                        <option>Specialized Containers</option>
+                                        <option>Compactors</option>
+                                        <option>Stationary Compactors: Used for high volumes of dry waste.</option>
+                                        <option>Self-Contained Compactors: Used for wet waste, combining container and compactor.</option>
+                                        <option>Recycling Bins</option>
+                                        <option>Single-Stream Recycling Bins: For mixed recyclables.</option>
+                                        <option>Source-Separated Bins: For specific recyclable materials like paper, glass, etc.</option>
+                                        <option>Organic Waste Containers</option>
+                                        <option>Composting Bins: For food and organic waste.</option>
+                                        <option>Hazardous Waste Containers</option>
+                                        <option>Specialized Hazardous Waste Bins: For chemicals, batteries, and other hazardous materials.</option>
+                                        <option>Industrial Containers</option>
+                                        <option>Bulk Waste Containers</option>
+                                        <option>Large Open-Top Containers: Used for construction and demolition waste.</option>
+                                        <option>Public Area Containers</option>
+                                        <option>Public Trash Bins</option>
+                                        <option>Street Bins: Typically small, often found in urban areas.</option>
+                                        <option>Park Bins: Larger, often with separate sections for recyclables.</option>
+                                        <option>Specialty Containers</option>
+                                        <option>E-Waste Bins</option>
+                                        <option>For electronic waste like computers and mobile phones.</option>
+                                        <option>Medical Waste Containers</option>
+                                        <option>Sharps Containers: For needles and other sharps.</option>
+                                        <option>Biohazard Containers: For biological waste.</option>
+                                        <option>Portable Solutions</option>
+                                        <option>Bagster Bags</option>
+                                        <option>A flexible, portable solution for smaller home renovation projects or cleanouts, typically holding up to 3 cubic yards of waste.</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         <div class="field">
@@ -112,6 +179,15 @@
     </section>
 
     <script>
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
         // Initialize the map
         function initMap() {
             var map = new google.maps.Map(document.getElementById('map'), {
@@ -135,6 +211,7 @@
                         position: results[0].geometry.location
                     });
                     addCard(results[0].geometry.location);
+                    showToast('Scheduled Pickup Successfully!');
                 } else {
                     alert('Geocode was not successful for the following reason: ' + status);
                 }
@@ -150,6 +227,7 @@
                 <div class="card-content">
                     <p><strong>Address:</strong> ${document.getElementById('address').value}</p>
                     <p><strong>Name:</strong> ${document.getElementById('name').value}</p>
+                    <p><strong>Date:</strong> ${document.getElementById('date').value}</p>
                     <p><strong>Type of Trash:</strong> ${document.getElementById('trashType').value}</p>
                     <p><strong>Pickup Frequency:</strong> ${document.getElementById('frequency').value}</p>
                     <p><strong>Weight:</strong> ${document.getElementById('weight').value}</p>
@@ -170,6 +248,6 @@
             }
         }
     </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVf5y9uQLX51fk0jiXcJaJMOUlWv-_gt8&callback=initMap"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?AIzaSyDVf5y9uQLX51fk0jiXcJaJMOUlWv-_gt8&callback=initMap"></script>
 </body>
 </html>
